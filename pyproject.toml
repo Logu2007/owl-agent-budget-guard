@@ -51,6 +51,7 @@ owl_agent_budget_guard = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = "-ra --strict-markers"
 
 [tool.ruff]
