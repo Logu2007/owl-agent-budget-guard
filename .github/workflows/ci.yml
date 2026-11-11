@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install package and development dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Ruff lint
+        run: ruff check src tests examples
+
+      - name: Ruff format check
+        run: ruff format --check src tests examples
+
+      - name: Pytest with coverage
+        run: pytest --cov=owl_agent_budget_guard --cov-report=term-missing --cov-fail-under=90
+
+      - name: CLI smoke test
+        run: |
+          owl-budget version
+          owl-budget validate --config examples/owl-budget.example.yaml
+          owl-budget report --config examples/owl-budget.example.yaml --format json > /dev/null
+
+      - name: Example
+        run: python examples/basic_usage.py
+
+      - name: Persistence example
+        run: python examples/persistent_usage.py

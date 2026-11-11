@@ -1,0 +1,30 @@
+# Example configuration. Copy to owl-budget.yaml, or run `owl-budget init`.
+version: 1
+
+agent:
+  name: owl-security-agent
+
+budget:
+  max_cost: 5.00
+  currency: USD
+
+limits:
+  max_llm_calls: 50
+  max_tool_calls: 100
+  max_tokens: 100000
+  max_input_tokens_per_call: 20000
+  max_output_tokens_per_call: 10000
+  max_execution_time: 600
+
+policies:
+  on_budget_exceeded: stop
+  unknown_cost: block
+  allow_budget_extension: false
+
+pricing:
+  models:
+    demo-model:
+      currency: USD
+      input_per_million: 1.00
+      output_per_million: 5.00
+      source: "illustrative prices for this example only"
